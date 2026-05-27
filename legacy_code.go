@@ -5,7 +5,6 @@ package onnxruntime_go
 
 import (
 	"fmt"
-	"os"
 )
 
 // #include "onnxruntime_wrapper.h"
@@ -30,115 +29,45 @@ type DynamicSession[In TensorData, Out TensorData] struct {
 // instead.
 func NewSessionWithONNXData[T TensorData](onnxData []byte, inputNames,
 	outputNames []string, inputs, outputs []*Tensor[T]) (*Session[T], error) {
+	_ = "STUB: not implemented"
 	// Unfortunately, a slice of pointers that satisfy an interface don't count
 	// as a slice of interfaces (at least, as I write this), so we'll make the
 	// conversion here.
-	tmpInputs := make([]Value, len(inputs))
-	tmpOutputs := make([]Value, len(outputs))
-	for i, t := range inputs {
-		tmpInputs[i] = t
-	}
-	for i, t := range outputs {
-		tmpOutputs[i] = t
-	}
-	s, e := NewAdvancedSessionWithONNXData(onnxData, inputNames, outputNames,
-		tmpInputs, tmpOutputs, nil)
-	if e != nil {
-		return nil, e
-	}
-	return &Session[T]{
-		s: s,
-	}, nil
+	return nil, nil
 }
 
 // DEPRECATED: See the notes on Session[T]. Use
 // NewDynamicAdvancedSessionWithONNXData instead.
 func NewDynamicSessionWithONNXData[in TensorData, out TensorData](onnxData []byte,
 	inputNames, outputNames []string) (*DynamicSession[in, out], error) {
-	s, e := NewDynamicAdvancedSessionWithONNXData(onnxData, inputNames,
-		outputNames, nil)
-	if e != nil {
-		return nil, e
-	}
-	return &DynamicSession[in, out]{
-		s: s,
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // DEPRECATED: See the notes on Session[T]. Use NewAdvancedSession instead.
 func NewSession[T TensorData](onnxFilePath string, inputNames,
 	outputNames []string, inputs, outputs []*Tensor[T]) (*Session[T], error) {
-	fileContent, e := os.ReadFile(onnxFilePath)
-	if e != nil {
-		return nil, fmt.Errorf("Error reading %s: %w", onnxFilePath, e)
-	}
-
-	toReturn, e := NewSessionWithONNXData[T](fileContent, inputNames,
-		outputNames, inputs, outputs)
-	if e != nil {
-		return nil, fmt.Errorf("Error creating session from %s: %w",
-			onnxFilePath, e)
-	}
-	return toReturn, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // DEPRECATED: See the notes on Session[T]. Use NewDynamicAdvancedSession
 // instead.
 func NewDynamicSession[in TensorData, out TensorData](onnxFilePath string,
 	inputNames, outputNames []string) (*DynamicSession[in, out], error) {
-	fileContent, e := os.ReadFile(onnxFilePath)
-	if e != nil {
-		return nil, fmt.Errorf("Error reading %s: %w", onnxFilePath, e)
-	}
-
-	toReturn, e := NewDynamicSessionWithONNXData[in, out](fileContent,
-		inputNames, outputNames)
-	if e != nil {
-		return nil, fmt.Errorf("Error creating session from %s: %w",
-			onnxFilePath, e)
-	}
-	return toReturn, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (s *Session[_]) Destroy() error {
-	return s.s.Destroy()
-}
+func (s *Session[_]) Destroy() error { _ = "STUB: not implemented"; return nil }
 
-func (s *DynamicSession[_, _]) Destroy() error {
-	return s.s.Destroy()
-}
+func (s *DynamicSession[_, _]) Destroy() error { _ = "STUB: not implemented"; return nil }
 
-func (s *Session[T]) Run() error {
-	return s.s.Run()
-}
+func (s *Session[T]) Run() error { _ = "STUB: not implemented"; return nil }
 
 func (s *DynamicSession[in, out]) Run(inputs []*Tensor[in],
 	outputs []*Tensor[out]) error {
-	if len(inputs) != len(s.s.s.inputNames) {
-		return fmt.Errorf("The session specified %d input names, but Run() "+
-			"was called with %d input tensors", len(s.s.s.inputNames),
-			len(inputs))
-	}
-	if len(outputs) != len(s.s.s.outputNames) {
-		return fmt.Errorf("The session specified %d output names, but Run() "+
-			"was called with %d output tensors", len(s.s.s.outputNames),
-			len(outputs))
-	}
-	inputValues := make([]*C.OrtValue, len(inputs))
-	for i, v := range inputs {
-		inputValues[i] = v.GetInternals().ortValue
-	}
-	outputValues := make([]*C.OrtValue, len(outputs))
-	for i, v := range outputs {
-		outputValues[i] = v.GetInternals().ortValue
-	}
-
-	status := C.RunOrtSession(s.s.s.ortSession, &inputValues[0],
-		&s.s.s.inputNames[0], C.int(len(inputs)), &outputValues[0],
-		&s.s.s.outputNames[0], C.int(len(outputs)))
-	if status != nil {
-		return fmt.Errorf("Error running network: %w", statusToError(status))
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -161,34 +90,28 @@ type TrainingSession struct{}
 
 // Always returns TrainingAPIRemovedError.
 func (s *TrainingSession) ExportModel(path string, outputNames []string) error {
-	return TrainingAPIRemovedError
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Always returns TrainingAPIRemovedError.
 func (s *TrainingSession) SaveCheckpoint(path string,
 	saveOptimizerState bool) error {
-	return TrainingAPIRemovedError
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Always returns TrainingAPIRemovedError.
-func (s *TrainingSession) Destroy() error {
-	return TrainingAPIRemovedError
-}
+func (s *TrainingSession) Destroy() error { _ = "STUB: not implemented"; return nil }
 
 // Always returns TrainingAPIRemovedError.
-func (s *TrainingSession) TrainStep() error {
-	return TrainingAPIRemovedError
-}
+func (s *TrainingSession) TrainStep() error { _ = "STUB: not implemented"; return nil }
 
 // Always returns TrainingAPIRemovedError.
-func (s *TrainingSession) OptimizerStep() error {
-	return TrainingAPIRemovedError
-}
+func (s *TrainingSession) OptimizerStep() error { _ = "STUB: not implemented"; return nil }
 
 // Always returns TrainingAPIRemovedError.
-func (s *TrainingSession) LazyResetGrad() error {
-	return TrainingAPIRemovedError
-}
+func (s *TrainingSession) LazyResetGrad() error { _ = "STUB: not implemented"; return nil }
 
 // Support for TrainingInputOutputNames has been removed from onnxruntime_go
 // following the deprecation of the training API in onnxruntime 1.20.0.
@@ -202,24 +125,29 @@ type TrainingInputOutputNames struct {
 // Always returns (nil, TrainingAPIRemovedError).
 func GetInputOutputNames(checkpointStatePath string, trainingModelPath string,
 	evalModelPath string) (*TrainingInputOutputNames, error) {
-	return nil, TrainingAPIRemovedError
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Always returns false.
 func IsTrainingSupported() bool {
+	_ = "STUB: not implemented"
+
+	// Always returns (nil, TrainingAPIRemovedError).
 	return false
 }
 
-// Always returns (nil, TrainingAPIRemovedError).
 func NewTrainingSessionWithOnnxData(checkpointData, trainingData, evalData,
 	optimizerData []byte, inputs, outputs []Value,
 	options *SessionOptions) (*TrainingSession, error) {
-	return nil, TrainingAPIRemovedError
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Always returns (nil, TrainingAPIRemovedError).
 func NewTrainingSession(checkpointStatePath, trainingModelPath, evalModelPath,
 	optimizerModelPath string, inputs, outputs []Value,
 	options *SessionOptions) (*TrainingSession, error) {
-	return nil, TrainingAPIRemovedError
+	_ = "STUB: not implemented"
+	return nil, nil
 }
